@@ -13,6 +13,12 @@ module.exports = function (content) {
   this.addDependency(this.resourcePath);
 
   var cb = this.async();
+  
+  if (svgoOptions.disableSvgo) {
+    var compiled = compiler.compile(content, {preserveWhitespace: false});
+    cb(null, "module.exports = {render: function () {" + compiled.render + "}};");
+    return;
+  }
 
   svgo.optimize(content, function (result) {
     if (result.error) {
